@@ -1,0 +1,20 @@
+import React,{useState,useEffect} from "react";
+const h=React.createElement;
+const rc=(x,y,w,hh,f,o)=>h("rect",{x,y,width:w,height:hh,fill:f,...o});
+const A=(n,f)=>Array.from({length:n},(_,i)=>f(i));
+const SV=(a,b,...k)=>{const id="g"+a.slice(1);return h("svg",{viewBox:"0 0 1200 600",preserveAspectRatio:"xMidYMid slice","aria-hidden":true},h("defs",null,h("linearGradient",{id,x1:0,y1:0,x2:1,y2:1},h("stop",{offset:0,stopColor:a}),h("stop",{offset:1,stopColor:b}))),rc(0,0,1200,600,"url(#"+id+")"),...k)};
+const sc1=()=>SV("#0a2a5e","#1d5db0",rc(700,80,400,440,"#dfe6ee",{rx:16}),rc(724,104,352,392,"#2b3440",{rx:10}),...A(3,r=>A(6,c=>h("g",{key:r*6+c},rc(742+c*55,130+r*115,40,80,"#e9edf2",{rx:6}),rc(752+c*55,(c%2?150:176)+r*115,20,30,c%3===0?"#e8590c":"#6c7a89",{rx:4})))).flat(),h("path",{d:"M700 300C560 300 520 420 380 420S200 520 0 520",stroke:"#f5a623",strokeWidth:10,fill:"none",strokeLinecap:"round"}),h("path",{d:"M700 340C600 340 560 470 420 470S240 560 0 560",stroke:"#4aa3ff",strokeWidth:10,fill:"none",strokeLinecap:"round"}),h("polygon",{points:"470,90 380,250 450,250 410,380 540,200 465,200",fill:"#ffd23f"}));
+const sc2=()=>SV("#063b4a","#0f8aa0",h("path",{d:"M480 130H900V330H1180",stroke:"#cfd8e0",strokeWidth:36,fill:"none",strokeLinecap:"round",strokeLinejoin:"round"}),h("path",{d:"M560 480H1120",stroke:"#c97a3d",strokeWidth:30,fill:"none",strokeLinecap:"round"}),rc(868,230,64,64,"#8f9ba7",{rx:8}),rc(895,180,10,55,"#555"),h("circle",{cx:900,cy:170,r:34,fill:"#d93025"}),rc(865,163,70,14,"#a52018",{rx:7}),...A(4,i=>h("path",{key:i,d:"M"+(560+i*70)+" "+(190+i*25)+"q-20 36 0 52q20-16 0-52z",fill:"#7fd3f0",opacity:.85})));
+const sc3=()=>SV("#2b3a55","#d98a54",rc(0,540,1200,60,"#3b2a20"),...A(7,r=>A(6,c=>r<5||c<3?rc(640+c*95+(r%2?-47:0),490-r*52,90,46,c%2?"#b5532f":"#a24523",{rx:3,key:r*6+c}):null)).flat(),h("polygon",{points:"470,390 590,340 630,372 510,440",fill:"#cfd8e0"}),rc(400,420,110,18,"#5a3a22",{rx:9,transform:"rotate(-25 450 430)"}));
+const sc4=()=>SV("#2c3e50","#5d7a96",...A(5,r=>A(6,c=>r===4&&c>3?null:rc(620+c*90,130+r*90,84,84,(r+c)%2?"#f1f4f7":"#3d8bbd",{rx:3,key:r*6+c}))).flat(),rc(1040,444,90,90,"rgba(0,0,0,.25)",{rx:4}),rc(1048,430,84,84,"#3d8bbd",{rx:3,transform:"rotate(-10 1090 472)"}));
+const sc5=()=>SV("#3a2459","#c4546f",rc(600,70,560,460,"#ece6dc",{rx:10}),rc(600,70,560,230,"#2f8f8b",{rx:10}),...A(5,i=>rc(640+i*105,290,22,30+(i%3)*22,"#2f8f8b",{rx:11,key:i})),rc(760,190,260,56,"#e8590c",{rx:26}),h("path",{d:"M1020 218H1075V310",stroke:"#444",strokeWidth:8,fill:"none",strokeLinecap:"round"}),rc(1055,310,40,110,"#444",{rx:10}));
+const SL=[["electricite","⚡ Électricité","Mise aux normes d’un tableau électrique",sc1],["plomberie","🚰 Plomberie","Installation et réparation de canalisations",sc2],["maconnerie","🧱 Maçonnerie","Construction de murs et clôtures",sc3],["carrelage","🔲 Carrelage","Pose de carrelage soignée",sc4],["peinture","🎨 Peinture","Finitions et remise en état",sc5]];
+export function Slides(){const[i,si]=useState(0);const[p,sp]=useState(false);const[x0,sx]=useState(null);
+useEffect(()=>{if(p||matchMedia("(prefers-reduced-motion: reduce)").matches)return;const t=setInterval(()=>si(x=>(x+1)%SL.length),5500);return()=>clearInterval(t)},[p]);
+const go=n=>si((n+SL.length)%SL.length);
+return h("div",{className:"hs",role:"region","aria-label":"Nos réalisations en images",onMouseEnter:()=>sp(true),onMouseLeave:()=>sp(false),onTouchStart:e=>sx(e.touches[0].clientX),onTouchEnd:e=>{if(x0!==null){const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40)go(i+(dx<0?1:-1))}sx(null)}},
+SL.map((s,k)=>h("div",{key:s[0],className:"sl"+(k===i?" on":""),"aria-hidden":k!==i},s[3]())),
+h("div",{className:"hcap","aria-live":"polite"},SL[i][1]," · ",SL[i][2]),
+h("button",{className:"hb hl","aria-label":"Image précédente",onClick:()=>go(i-1)},"‹"),
+h("button",{className:"hb hr","aria-label":"Image suivante",onClick:()=>go(i+1)},"›"),
+h("div",{className:"hdots"},SL.map((s,k)=>h("button",{key:s[0],className:k===i?"on":"","aria-label":"Image "+(k+1)+" : "+s[1],onClick:()=>go(k)}))))}
