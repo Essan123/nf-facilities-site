@@ -30,3 +30,10 @@ label{display:block;font-weight:600;margin:12px 0 4px}input,select,textarea{widt
 footer{background:#0d2540;color:#dbe4f0;padding:36px 0 90px;font-size:.92rem}footer a{color:#dbe4f0}footer .grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
 .call{display:none}@media(max-width:860px){.call{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--bd)}.call .btn{flex:1}}
 .tbl{overflow-x:auto}
+
+.pick{position:relative;display:inline-block}
+.pm{position:absolute;z-index:40;left:0;top:calc(100% + 6px);min-width:260px;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.28);padding:6px;display:flex;flex-direction:column}
+.pm a,.pm .pc{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:8px;color:var(--tx);text-decoration:none;font:inherit;font-weight:600;background:none;border:0;cursor:pointer;text-align:left}
+.pm a:hover,.pm .pc:hover{background:var(--soft)}
+.pm .pc{color:var(--mut);font-weight:400}
+@media(max-width:860px){.call .pick{flex:1;display:flex}.call .pick>.btn{flex:1}.call .pm{top:auto;bottom:calc(100% + 8px);left:0;right:0}}

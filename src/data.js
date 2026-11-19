@@ -1,5 +1,10 @@
 // ===== CONTENU DU SITE : modifiez ici (coordonnées, métiers, avis, FAQ) =====
-export const C={nom:"NF FACILITIES",tel:"07 49 76 15 40",telHref:"+2250749761540",wa:"2250749761540",email:"dtnffacilities@gmail.com",email2:"facilitiesnf@gmail.com",ville:"Côte d’Ivoire",zoneTxt:"partout en Côte d’Ivoire",horaires:"24h/24, 7j/7",siret:"[SIRET à compléter]",adresse:"Cocody, Abidjan",hebergeur:"[Hébergeur à compléter]"};
+export const C={nom:"NF FACILITIES",tel:"07 49 76 15 40",lab1:"Numéro 1",tel2:"01 03 64 83 32",lab2:"Numéro 2",telHref:"+2250749761540",wa:"2250749761540",email:"dtnffacilities@gmail.com",email2:"facilitiesnf@gmail.com",ville:"Côte d’Ivoire",zoneTxt:"partout en Côte d’Ivoire",horaires:"24h/24, 7j/7",siret:"[SIRET à compléter]",adresse:"Cocody, Abidjan",hebergeur:"[Hébergeur à compléter]"};
+// Le 2e numéro est ajouté automatiquement dès que "tel2" est rempli (ex. tel2:"05 00 00 00 00"). Laissez "" pour ne pas l'afficher.
+const dig=t=>{const x=String(t).replace(/\D/g,"");return x.startsWith("225")&&x.length>10?x:"225"+x};
+const mk=(l,t)=>({l,tel:t,href:"+"+dig(t),wa:dig(t)});
+export const PHONES=[mk(C.lab1,C.tel),C.tel2&&mk(C.lab2,C.tel2)].filter(Boolean);
+export const EMAILS=[C.email,C.email2].filter(Boolean);
 export const SERV=[
 {id:"electricite",ic:"⚡",t:"Électricité",d:"Installation, mise aux normes et dépannage électrique.",l:["Dépannage panne et disjonction","Tableau électrique, prises, éclairage","Mise aux normes et diagnostic","Interphone, vidéophone, domotique"],u:1},
 {id:"plomberie",ic:"🚰",t:"Plomberie",d:"Fuites, sanitaires, chauffe-eau et canalisations.",l:["Recherche et réparation de fuite","Salle de bain, WC, robinetterie","Chauffe-eau, ballon","Débouchage de canalisations"],u:1},

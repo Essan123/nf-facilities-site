@@ -1,14 +1,19 @@
 import React,{useState,useEffect} from "react";
 import {createRoot} from "react-dom/client";
 import "./styles.css";
-import {C,SERV,WORKS,AVIS,FAQ,ZONES,PAGES} from "./data.js";
+import {C,PHONES,EMAILS,SERV,WORKS,AVIS,FAQ,ZONES,PAGES} from "./data.js";
 import {Slides} from "./Slides.jsx";
 import {ContactForm} from "./ContactForm.jsx";
 import {submitForm} from "./api.js";
 const h=React.createElement;
 const E=s=>encodeURIComponent(s);
 function useRoute(){const g=()=>(location.hash||"#accueil").slice(1)||"accueil";const[r,s]=useState(g());useEffect(()=>{const f=()=>{s(g());window.scrollTo(0,0)};addEventListener("hashchange",f);return()=>removeEventListener("hashchange",f)},[]);return r}
-const Tel=p=>h("a",{className:"btn "+(p.cls||"b1"),href:"tel:"+C.telHref},"📞 ",p.label||"Appeler");
+function Pick(p){const[o,so]=useState(false);const cls="btn "+(p.cls||"b1");const it=p.items;
+if(it.length<2)return h("a",{className:cls,href:it[0].href},p.icon," ",p.label);
+return h("span",{className:"pick"},h("button",{className:cls,"aria-expanded":o,onClick:()=>so(!o)},p.icon," ",p.label," ▾"),o&&h("div",{className:"pm",role:"menu"},it.map(x=>h("a",{key:x.href,href:x.href,onClick:()=>so(false)},p.icon+" "+x.t)),h("button",{className:"pc",onClick:()=>so(false)},"Fermer")))}
+const Tel=p=>h(Pick,{icon:"📞",label:p.label||"Appeler",cls:p.cls,items:PHONES.map(x=>({href:"tel:"+x.href,t:x.l+" · "+x.tel}))});
+const Wa=p=>h(Pick,{icon:"💬",label:p.label||"WhatsApp",cls:p.cls||"b3",items:PHONES.map(x=>({href:"https://wa.me/"+x.wa,t:x.l+" · "+x.tel}))});
+const Mail=p=>h(Pick,{icon:"✉️",label:p.label||"E-mail",cls:p.cls||"b4",items:EMAILS.map(x=>({href:"mailto:"+x,t:x}))});
 const Dev=p=>h("a",{className:"btn "+(p.cls||"b3"),href:"#devis"},p.label||"Demander un devis");
 function Head({r}){const[o,so]=useState(false);return h("header",null,h("div",{className:"w bar"},
 h("a",{className:"logo",href:"#accueil"},"🛠️ ",C.nom.split(" ")[0]," ",h("span",null,C.nom.split(" ").slice(1).join(" "))),
@@ -36,7 +41,7 @@ h("div",{className:"row"},h(Dev,{label:"Demander une offre de maintenance"}),h(T
 function Zone(){return h("section",{className:"sec"},h("div",{className:"w"},h("h1",null,"Zone d’intervention"),h("p",null,"Nous sommes basés à Cocody (Abidjan) et nous intervenons ",C.zoneTxt,"."),h("div",{className:"chips"},ZONES.map(z=>h("span",{className:"chip",key:z},z))),h("div",{className:"card"},h("b",null,"Votre commune n’est pas listée ?"),h("p",null,"Contactez-nous : nous étudions chaque demande."),h(Dev,null))))}
 function Faq(){return h("section",{className:"sec"},h("div",{className:"w"},h("h1",null,"Questions fréquentes"),FAQ.map(([q,a])=>h("details",{key:q},h("summary",null,q),h("p",null,a)))))}
 function Contact(){return h("section",{className:"sec"},h("div",{className:"w"},h("h1",null,"Contact"),h("div",{className:"grid"},
-h("div",{className:"card"},h("h3",null,"Nous joindre"),h("p",null,"📞 ",h("a",{href:"tel:"+C.telHref},C.tel)),h("p",null,"✉️ ",h("a",{href:"mailto:"+C.email},C.email),h("br"),h("a",{href:"mailto:"+C.email2},C.email2)),h("p",null,"🕒 ",C.horaires),h("p",null,"📍 ",C.adresse," · intervention ",C.zoneTxt),h("div",{className:"row"},h(Tel,null),h("a",{className:"btn b3",href:"https://wa.me/"+C.wa},"💬 WhatsApp"))),
+h("div",{className:"card"},h("h3",null,"Nous joindre"),...PHONES.map(x=>h("p",{key:x.href},"📞 ",x.l," : ",h("a",{href:"tel:"+x.href},x.tel)," · ",h("a",{href:"https://wa.me/"+x.wa},"WhatsApp"))),h("p",null,"✉️ ",h("a",{href:"mailto:"+C.email},C.email),h("br"),h("a",{href:"mailto:"+C.email2},C.email2)),h("p",null,"🕒 ",C.horaires),h("p",null,"📍 ",C.adresse," · intervention ",C.zoneTxt),h("div",{className:"row"},h(Tel,null),h(Wa,null),h(Mail,null))),
 h(ContactForm),h("div",{className:"card"},h("h3",null,"Un projet ?"),h("p",null,"Le formulaire de devis nous permet de chiffrer plus vite : décrivez votre besoin en 3 étapes."),h(Dev,null)))))}
 function Quote(){const[st,ss]=useState(1);const[d,sd]=useState({type:"Particulier",prest:SERV[0].t,urg:"Normal",ville:"",desc:"",nom:"",tel:"",email:"",rgpd:false,piege:""});const[er,se]=useState({});const[done,sdn]=useState(false);
 const set=k=>e=>sd({...d,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value});
@@ -45,7 +50,7 @@ const next=()=>val(st)&&ss(st+1);
 const[busy,sb]=useState(false);
 const send=async()=>{if(d.piege||!val(3))return;sb(true);try{await submitForm("Demande de devis – "+d.prest,{name:d.nom,phone:d.tel,...(d.email?{email:d.email}:{}),message:msg});sdn("ok")}catch(e){sdn("fallback")}sb(false)};
 const msg=`Demande de devis\nType : ${d.type}\nPrestation : ${d.prest}\nUrgence : ${d.urg}\nLieu : ${d.ville}\nBesoin : ${d.desc}\nNom : ${d.nom}\nTél : ${d.tel}\nE-mail : ${d.email}`;
-if(done)return h("section",{className:"sec"},h("div",{className:"w"},h("div",{className:"ok"},h("h2",null,done==="ok"?"✅ Demande envoyée":"⚠️ Envoi manuel nécessaire"),h("p",null,done==="ok"?"Merci ! Nous vous recontactons très vite. Pour une urgence, appelez-nous directement.":"L’envoi automatique n’a pas abouti. Envoyez votre demande par WhatsApp ou e-mail : elle est déjà rédigée."),done==="ok"?null:h("div",{className:"row"},h("a",{className:"btn b3",href:"https://wa.me/"+C.wa+"?text="+E(msg)},"💬 Envoyer par WhatsApp"),h("a",{className:"btn b4",href:"mailto:"+C.email+"?subject="+E("Demande de devis – "+d.prest)+"&body="+E(msg)},"✉️ Envoyer par e-mail")),h("p",null,h("small",null,"Pour les urgences, appelez directement : "),h("a",{href:"tel:"+C.telHref},C.tel)))));
+if(done)return h("section",{className:"sec"},h("div",{className:"w"},h("div",{className:"ok"},h("h2",null,done==="ok"?"✅ Demande envoyée":"⚠️ Envoi manuel nécessaire"),h("p",null,done==="ok"?"Merci ! Nous vous recontactons très vite. Pour une urgence, appelez-nous directement.":"L’envoi automatique n’a pas abouti. Envoyez votre demande par WhatsApp ou e-mail : elle est déjà rédigée."),done==="ok"?null:h("div",{className:"row"},h(Pick,{icon:"💬",label:"Envoyer par WhatsApp",cls:"b3",items:PHONES.map(x=>({href:"https://wa.me/"+x.wa+"?text="+E(msg),t:x.l+" · "+x.tel}))}),h(Pick,{icon:"✉️",label:"Envoyer par e-mail",cls:"b4",items:EMAILS.map(x=>({href:"mailto:"+x+"?subject="+E("Demande de devis – "+d.prest)+"&body="+E(msg),t:x}))})),h("p",null,h("small",null,"Pour les urgences, appelez directement : "),h(Tel,{cls:"b4"})))));
 const F=(k,l,el)=>h("div",null,h("label",{htmlFor:k},l),el,er[k]&&h("div",{className:"err",role:"alert"},er[k]));
 const opt=a=>a.map(o=>h("option",{key:o},o));
 return h("section",{className:"sec"},h("div",{className:"w",style:{maxWidth:640}},h("h1",null,"Demande de devis gratuit"),h("div",{className:"prog"},[1,2,3].map(i=>h("i",{key:i,className:st>=i?"on":""}))),h("p",null,"Étape ",st," sur 3"),
@@ -55,7 +60,7 @@ st===3&&h("div",null,F("nom","Nom",h("input",{id:"nom",value:d.nom,onChange:set(
 h("label",{style:{display:"flex",gap:10,fontWeight:400}},h("input",{type:"checkbox",style:{width:24,minHeight:24},checked:d.rgpd,onChange:set("rgpd")}),h("span",null,"J’accepte que mes données soient utilisées pour traiter ma demande (conservées 3 ans maximum).")),er.rgpd&&h("div",{className:"err"},er.rgpd)),
 h("div",{className:"row"},st>1&&h("button",{className:"btn b4",onClick:()=>ss(st-1)},"← Retour"),st<3?h("button",{className:"btn b1",onClick:next},"Continuer →"):h("button",{className:"btn b1",disabled:busy,onClick:send},busy?"Envoi en cours…":"Valider ma demande"))))}
 function Legal(){return h("section",{className:"sec"},h("div",{className:"w"},h("h1",null,"Mentions légales & confidentialité"),h("h3",null,"Éditeur"),h("p",null,C.nom," · ",C.adresse," · SIRET : ",C.siret," · ",C.email),h("h3",null,"Hébergeur"),h("p",null,C.hebergeur),h("h3",null,"Données personnelles"),h("p",null,"Les informations saisies dans le formulaire servent uniquement à répondre à votre demande. Elles sont conservées 3 ans maximum et ne sont jamais revendues. Vous pouvez demander l’accès, la rectification ou la suppression de vos données à ",C.email,"."),h("h3",null,"Cookies"),h("p",null,"Ce site n’utilise aucun cookie de suivi.")))}
-function Foot(){return h("footer",null,h("div",{className:"w"},h("div",{className:"grid"},h("div",null,h("b",null,C.nom),h("p",null,"Tous corps de métier du bâtiment.")),h("div",null,h("b",null,"Contact"),h("p",null,h("a",{href:"tel:"+C.telHref},C.tel),h("br"),C.email,h("br"),C.horaires)),h("div",null,h("b",null,"Liens"),h("p",null,h("a",{href:"#devis"},"Devis gratuit"),h("br"),h("a",{href:"#faq"},"FAQ"),h("br"),h("a",{href:"#legal"},"Mentions légales"))))))}
+function Foot(){return h("footer",null,h("div",{className:"w"},h("div",{className:"grid"},h("div",null,h("b",null,C.nom),h("p",null,"Tous corps de métier du bâtiment.")),h("div",null,h("b",null,"Contact"),h("p",null,...PHONES.flatMap(x=>[h("a",{key:x.href,href:"tel:"+x.href},x.tel),h("br",{key:"b"+x.href})]),...EMAILS.flatMap(x=>[h("a",{key:x,href:"mailto:"+x},x),h("br",{key:"b"+x})]),C.horaires)),h("div",null,h("b",null,"Liens"),h("p",null,h("a",{href:"#devis"},"Devis gratuit"),h("br"),h("a",{href:"#faq"},"FAQ"),h("br"),h("a",{href:"#legal"},"Mentions légales"))))))}
 const V={accueil:Home,prestations:Prest,realisations:Works,residences:Res,zone:Zone,avis:()=>h("section",{className:"sec"},h("div",{className:"w"},h("h1",null,"Avis clients"),h(Avis))),faq:Faq,devis:Quote,contact:Contact,legal:Legal};
 function App(){const r=useRoute();const P=V[r]||Home;useEffect(()=>{document.title=(r==="accueil"?"":(PAGES.find(p=>p[0]===r)||[0,r])[1]+" – ")+C.nom},[r]);
 return h("div",null,h(Head,{r}),h("main",null,h(P)),h(Foot),h("div",{className:"call"},h(Tel,null),h("a",{className:"btn b3",href:"#devis"},"Devis")))}
